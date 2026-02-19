@@ -107,8 +107,7 @@ check_secure_boot() {
 			echo "Warning: Secure Boot is enabled."
 			echo "On RHEL/CentOS 8, the WireGuard kernel module is provided by ELRepo and is not signed by Red Hat."
 			echo "The module will likely fail to load unless you disable Secure Boot or enroll the ELRepo key."
-			echo "It is strongly recommended to disable Secure Boot before proceeding."
-			read -n1 -r -p "Press any key to continue..."
+			exiterr "Secure Boot is enabled. Disable Secure Boot or enroll the ELRepo key before proceeding."
 		fi
 	fi
 }
@@ -1063,10 +1062,6 @@ EOF
 
 start_wg_service() {
 	# Enable and start the wg-quick service
-	if ! modprobe -nq wireguard; then
-		echo "Warning: WireGuard kernel module not found. Skipping service start."
-		return
-	fi
 	(
 		set -x
 		systemctl enable --now wg-quick@wg0.service >/dev/null 2>&1
@@ -1087,9 +1082,6 @@ finish_setup() {
 		echo "Reboot the system to load the most recent kernel."
 	else
 		echo "Finished!"
-		if [[ "$os" == "centos" || "$os" == "rhel" || "$os" == "fedora" ]]; then
-			echo "It is recommended to reboot your system once setup is complete."
-		fi
 	fi
 	echo
 	echo "The client configuration is available in: $export_dir$client.conf"
