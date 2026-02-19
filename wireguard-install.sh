@@ -1016,11 +1016,7 @@ update_sysctl() {
 	fi
 	# Optimize sysctl settings such as TCP buffer sizes
 	base_url="https://github.com/hwdsl2/vpn-extras/releases/download/v1.0.0"
-	if [ "$os" = "rhel" ]; then
-		conf_url="$base_url/sysctl-wg-centos"
-	else
-		conf_url="$base_url/sysctl-wg-$os"
-	fi
+	conf_url="$base_url/sysctl-wg-$os"
 	[ "$auto" != 0 ] && conf_url="${conf_url}-auto"
 	wget -t 3 -T 30 -q -O "$conf_opt" "$conf_url" 2>/dev/null \
 		|| curl -m 30 -fsL "$conf_url" -o "$conf_opt" 2>/dev/null \
